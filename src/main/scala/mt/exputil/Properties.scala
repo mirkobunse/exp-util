@@ -40,7 +40,7 @@ object Properties {
    * @param path path of the output file
    * @param p property mapping
    */
-  def write(path: String, p: Map[String, Any]) {
+  def write(path: String, p: Map[String, String]) {
     val l = p.keysIterator.map(_.length).max
     val w = new PrintWriter(new File(path))
     try {
@@ -52,7 +52,7 @@ object Properties {
     }
   }
 
-  def writeJava(path: String, p: java.util.Map[String, Any]) =
+  def writeJava(path: String, p: java.util.Map[String, String]) =
     write(path, p.asScala.toMap)
 
 }
