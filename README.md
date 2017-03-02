@@ -8,7 +8,7 @@ Reoccuring patterns of experimental setups are adressed by these utilities.
 
 Easily refer to the Maven artifact that is located in the project-internal Maven repository:
 
-```
+```xml
 <repositories>
     ...
     <!-- project-internal maven repository of exp-util at github -->
