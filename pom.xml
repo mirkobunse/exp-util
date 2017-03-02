@@ -21,6 +21,15 @@
   </distributionManagement>
   
   <dependencies>
+    
+    <!-- Name the obvious for Java projects using this -->
+    <dependency>
+	    <groupId>org.scala-lang</groupId>
+	    <artifactId>scala-library</artifactId>
+	    <version>${scala.fullversion}</version>
+	</dependency>
+	
+	<!-- Testing -->
   	<dependency>
   		<groupId>org.scalactic</groupId>
   		<artifactId>scalactic_${scala.baseversion}</artifactId>
@@ -33,6 +42,7 @@
   		<version>3.0.1</version>
   		<scope>test</scope>
   	</dependency>
+  	
   </dependencies>
   
   <build>
