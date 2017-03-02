@@ -8,7 +8,7 @@ class PropertiesTest extends FlatSpec with Matchers {
   val path    = "src/test/resources/test.properties"
   val outpath = "target/testout.properties"
   val name    = "PropertiesTest"
-  val p = Properties.read(path, name)
+  val p       = Properties.read(path, name)
 
   "Properties" should "read specified properties" in {
     p apply "prop1" shouldBe "abc"
@@ -30,6 +30,7 @@ class PropertiesTest extends FlatSpec with Matchers {
       Properties.read("src/test/resources/missing.properties", name))
   }
 
-  Properties.write(outpath, p) // should check output manually
+  // check java output manually
+  Properties.writeJava(outpath, Properties.readJava(path, name))
 
 }

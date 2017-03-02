@@ -5,6 +5,7 @@ import java.io.PrintWriter
 import java.io.File
 import java.util.Calendar
 import collection.JavaConverters._
+import scala.collection.immutable.ListMap
 
 class Properties
 
@@ -22,18 +23,18 @@ object Properties {
    * @return property mapping specified in file
    */
   def read(path: String, name: String) =
-    Source.fromFile(path).getLines()
+    ListMap(Source.fromFile(path).getLines()
       .filter(p => !p.startsWith("#"))
       .map(f => {
         val s = f.split("=")
         (s(0).trim(), s(1).trim())
-      }).toMap +
+      }).toArray:_*) +      // ListMap(..toArray:_*) preserves order
       (EXPERIMENT_NAME -> name) +
       (START_TIME -> Calendar.getInstance().getTime().toString()) +
       (BASE_PROPERTIES -> path)
 
   def readJava(path: String, name: String) = read(path, name).asJava
-
+  
   /**
    * Write a property mapping to a file
    *
@@ -53,6 +54,6 @@ object Properties {
   }
 
   def writeJava(path: String, p: java.util.Map[String, String]) =
-    write(path, p.asScala.toMap)
+    write(path, ListMap(p.entrySet().asScala.toArray.map(f => f.getKey -> f.getValue):_*))
 
 }
