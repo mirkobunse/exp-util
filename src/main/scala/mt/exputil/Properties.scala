@@ -12,6 +12,7 @@ object Properties {
   
   implicit class PropertyListMap(val m: ListMap[String,String]) {
     def splitOn(key: String) = m.apply(key).split(",").map(f => (m - key) + (key -> f))
+    def write(path: String)  = Properties.write(path, m)
   }
   
   implicit class PropertyListMapArray(val a: Array[ListMap[String, String]]) {

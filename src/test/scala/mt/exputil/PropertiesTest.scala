@@ -61,7 +61,9 @@ class PropertiesTest extends FlatSpec with Matchers {
 
   // check java output manually
   Properties.writeJava(outpath, Properties.readJava(path, name))
+  
+  // split and use implicit write method to write each split result
   p.splitOn("split1").zipWithIndex.foreach(f =>
-    Properties.write(outpath.replace(".properties", f._2 + ".properties"), f._1))
+    f._1.write(outpath.replace(".properties", f._2 + ".properties")))
 
 }
