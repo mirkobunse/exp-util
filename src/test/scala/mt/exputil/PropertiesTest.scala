@@ -47,7 +47,7 @@ class PropertiesTest extends FlatSpec with Matchers {
   }
   
   it should "implicitly split on both 'split1' and 'split2'" in {
-    p.splitOn("split1").splitOn("split2").foreach(f => {
+    p.splitOn(Seq("split1", "split2")).foreach(f => {
       f apply "prop1"          shouldBe "abc"
       f apply "property"       shouldBe "4"
       f.apply("split1").length shouldBe 1  // split

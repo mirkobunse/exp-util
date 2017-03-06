@@ -15,11 +15,15 @@ object Properties {
   
   implicit class PropertyListMap(val m: ListMap[String,String]) {
     def splitOn(key: String) = m.apply(key).split(",").map(f => (m - key) + (key -> f))
+    def splitOn(keys: Seq[String]): Array[ListMap[String, String]] = 
+      if (keys.length == 1) m.splitOn(keys(0)) else m.splitOn(keys(0)).splitOn(keys.slice(1, keys.length))
     def write(path: String)  = Properties.write(path, m)
   }
   
   implicit class PropertyListMapArray(val a: Array[ListMap[String, String]]) {
     def splitOn(key: String) = a.flatMap(f => f.splitOn(key))
+    def splitOn(keys: Seq[String]): Array[ListMap[String, String]] = 
+      if (keys.length == 1) a.splitOn(keys(0)) else a.splitOn(keys(0)).splitOn(keys.slice(1, keys.length))
   }
 
   val EXPERIMENT_NAME = "@experimentName"
