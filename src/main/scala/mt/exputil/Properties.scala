@@ -6,10 +6,17 @@ import java.io.File
 import java.util.Calendar
 import collection.JavaConverters._
 import scala.collection.immutable.ListMap
-
-class Properties
+import scala.collection.generic.ImmutableMapFactory
 
 object Properties {
+  
+  implicit class PropertyListMap(val m: ListMap[String,String]) {
+    def splitOn(key: String) = m.apply(key).split(",").map(f => (m - key) + (key -> f))
+  }
+  
+  implicit class PropertyListMapArray(val a: Array[ListMap[String, String]]) {
+    def splitOn(key: String) = a.flatMap(f => f.splitOn(key))
+  }
 
   val EXPERIMENT_NAME = "@experimentName"
   val START_TIME = "@startTime"
@@ -28,7 +35,7 @@ object Properties {
       .map(f => {
         val s = f.split("=")
         (s(0).trim(), s(1).trim())
-      }).toArray:_*) +      // ListMap(..toArray:_*) preserves order
+      }).toSeq:_*) +      // ListMap(..toSeq:_*) preserves order
       (EXPERIMENT_NAME -> name) +
       (START_TIME -> Calendar.getInstance().getTime().toString()) +
       (BASE_PROPERTIES -> path)
@@ -54,6 +61,6 @@ object Properties {
   }
 
   def writeJava(path: String, p: java.util.Map[String, String]) =
-    write(path, ListMap(p.entrySet().asScala.toArray.map(f => f.getKey -> f.getValue):_*))
+    write(path, ListMap(p.entrySet().asScala.toSeq.map(f => f.getKey -> f.getValue):_*))
 
 }
