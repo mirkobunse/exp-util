@@ -1,12 +1,15 @@
 package mt.exputil
 
-import scala.io.Source
-import java.io.PrintWriter
 import java.io.File
+import java.io.PrintWriter
 import java.util.Calendar
-import collection.JavaConverters._
+
+import scala.collection.JavaConverters.asScalaSetConverter
+import scala.collection.JavaConverters.mapAsJavaMapConverter
 import scala.collection.immutable.ListMap
-import scala.collection.generic.ImmutableMapFactory
+import scala.io.Source
+
+class Properties
 
 object Properties {
   
