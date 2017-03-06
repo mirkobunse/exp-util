@@ -9,7 +9,7 @@ class PropertiesTest extends FlatSpec with Matchers {
   val path    = "src/test/resources/test.properties"
   val outpath = "target/testout.properties"
   val name    = "PropertiesTest"
-  val p       = Properties.read(path, name)
+  val p       = Properties.read(path, name) + ("myProp" -> "myVal")
 
   "Properties" should "read specified properties" in {
     p apply "prop1"    shouldBe "abc"
@@ -22,6 +22,7 @@ class PropertiesTest extends FlatSpec with Matchers {
     p apply Properties.EXPERIMENT_NAME shouldBe name
     p apply Properties.BASE_PROPERTIES shouldBe path
     p apply Properties.START_TIME
+    p apply "myProp"   shouldBe "myVal"
   }
 
   it should "fail for missing properties" in {
@@ -42,6 +43,7 @@ class PropertiesTest extends FlatSpec with Matchers {
       f._1 apply Properties.EXPERIMENT_NAME shouldBe name
       f._1 apply Properties.BASE_PROPERTIES shouldBe path
       f._1 apply Properties.START_TIME
+      f._1 apply "myProp"   shouldBe "myVal"
       a[NoSuchElementException] shouldBe thrownBy(f._1 apply "missing")
     })
   }
@@ -55,6 +57,7 @@ class PropertiesTest extends FlatSpec with Matchers {
       f apply Properties.EXPERIMENT_NAME shouldBe name
       f apply Properties.BASE_PROPERTIES shouldBe path
       f apply Properties.START_TIME
+      f apply "myProp"         shouldBe "myVal"
       a[NoSuchElementException] shouldBe thrownBy(f apply "missing")
     })
   }
