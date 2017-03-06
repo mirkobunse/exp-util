@@ -4,10 +4,10 @@ import java.io.File
 import java.io.PrintWriter
 import java.util.Calendar
 
-import scala.collection.JavaConverters.asScalaSetConverter
-import scala.collection.JavaConverters.mapAsJavaMapConverter
+import scala.collection.JavaConverters._
 import scala.collection.immutable.ListMap
 import scala.io.Source
+import java.util.function.Consumer
 
 class Properties
 
@@ -70,5 +70,17 @@ object Properties {
 
   def writeJava(path: String, p: java.util.Map[String, String]) =
     write(path, ListMap(p.entrySet().asScala.toSeq.map(f => f.getKey -> f.getValue):_*))
+  
+  /**
+   * Conduct an experiment with Java
+   * 
+   * @param path path of the properties input file
+   * @param name name of the experiment
+   * @param splitOn properties to split for individual experiments
+   * @param forEach Java function conducting each individual experiment
+   */
+  def conductJava(path: String, name: String, splitOn: java.util.List[String],
+      forEach: java.util.function.Consumer[java.util.Map[String,String]]) =
+        read(path, name).splitOn(splitOn.asScala).foreach(f => forEach.accept(f.asJava))
 
 }
