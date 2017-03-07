@@ -12,7 +12,7 @@ object Example {
   def main(args: Array[String]) =
 
     Properties.read("src/main/resources/example.properties", "Example")
-      .splitOn("seed").foreach(m => {  // inserting "par." before "foreach" executes in parallel
+      .splitOn("seed").par.level(2, false).foreach(m => {  // inserting "par." before "foreach" executes in parallel
 
         /*
          * Specify individual experiments inside foreach()

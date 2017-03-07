@@ -8,9 +8,11 @@ public class JavaExample {
 	
 	public static void main(String[] args) {
 		
+		
+		
 		List<String> splitOn = new ArrayList<>();
 		splitOn.add("seed");
-		Properties.conductJava("src/main/resources/example.properties", "Example", splitOn, c -> {
+		Properties.conductJava("src/main/resources/example.properties", "Example", splitOn, 2, false, c -> {
 
 			/*
 			 * Specify individual experiments inside foreach()

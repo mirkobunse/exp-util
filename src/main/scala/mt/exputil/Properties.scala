@@ -3,11 +3,14 @@ package mt.exputil
 import java.io.File
 import java.io.PrintWriter
 import java.util.Calendar
-
-import scala.collection.JavaConverters._
-import scala.collection.immutable.ListMap
-import scala.io.Source
 import java.util.function.Consumer
+
+import scala.io.Source
+import scala.collection.immutable.ListMap
+import scala.collection.parallel.mutable.ParArray
+import scala.collection.JavaConverters._
+import scala.collection.parallel.ForkJoinTaskSupport
+import scala.concurrent.forkjoin.ForkJoinPool
 
 class Properties
 
@@ -25,10 +28,20 @@ object Properties {
     def splitOn(keys: Seq[String]): Array[ListMap[String, String]] = 
       if (keys.length == 1) a.splitOn(keys(0)) else a.splitOn(keys(0)).splitOn(keys.slice(1, keys.length))
   }
+  
+  implicit class ConfParArray(val p: ParArray[ListMap[String,String]]) {
+    private[this] def level(parallelism: Int): ParArray[ListMap[String,String]] = {
+      p.tasksupport = new ForkJoinTaskSupport(new ForkJoinPool(parallelism))
+      p
+    }
+    def level(default: Int, enforce: Boolean): ParArray[ListMap[String,String]] =
+      level(if (enforce) default else p(0).getOrElse(PARALLELISM_LEVEL, default).toString.toInt)
+  }
 
   val EXPERIMENT_NAME = "@experimentName"
   val START_TIME = "@startTime"
   val BASE_PROPERTIES = "@baseProperties"
+  val PARALLELISM_LEVEL = "parallelismLevel"
 
   /**
    * Read a property mapping from a file.
@@ -70,17 +83,21 @@ object Properties {
 
   def writeJava(path: String, p: java.util.Map[String, String]) =
     write(path, ListMap(p.entrySet().asScala.toSeq.map(f => f.getKey -> f.getValue):_*))
-  
+
   /**
    * Conduct an experiment with Java
-   * 
+   *
    * @param path path of the properties input file
    * @param name name of the experiment
    * @param splitOn properties to split for individual experiments
+   * @param defaultParLevel level of parallelism (how many experiments are conducted in parallel)
    * @param forEach Java function conducting each individual experiment
    */
   def conductJava(path: String, name: String, splitOn: java.util.List[String],
-      forEach: java.util.function.Consumer[java.util.Map[String,String]]) =
-        read(path, name).splitOn(splitOn.asScala).foreach(f => forEach.accept(f.asJava))
+                  defaultParLevel: Int, enforceParLevel: Boolean,
+                  forEach: java.util.function.Consumer[java.util.Map[String, String]]) =
+    read(path, name).splitOn(splitOn.asScala).
+      par.level(defaultParLevel, enforceParLevel).
+      foreach(f => forEach.accept(f.asJava))
 
 }
