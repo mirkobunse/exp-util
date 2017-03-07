@@ -1,128 +1,130 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>de.sfb876</groupId>
   <artifactId>exp-util</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <name>exp-util</name>
-  
+
   <properties>
-  	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  	<scala.baseversion>2.11</scala.baseversion>
-  	<scala.fullversion>[${scala.baseversion}.7,${scala.baseversion}.8]</scala.fullversion>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <scala.baseversion>2.11</scala.baseversion>
+    <scala.fullversion>[${scala.baseversion}.7,${scala.baseversion}.8]</scala.fullversion>
   </properties>
-  
+
   <distributionManagement>
     <repository>
-        <id>jitpack.io</id>
-        <url>https://jitpack.io</url>
+      <id>jitpack.io</id>
+      <url>https://jitpack.io</url>
     </repository>
   </distributionManagement>
-  
+
   <dependencies>
-    
+
     <!-- Name the obvious for Java projects using this -->
     <dependency>
-	    <groupId>org.scala-lang</groupId>
-	    <artifactId>scala-library</artifactId>
-	    <version>${scala.fullversion}</version>
-	</dependency>
-	
-	<!-- Testing -->
-  	<dependency>
-  		<groupId>org.scalactic</groupId>
-  		<artifactId>scalactic_${scala.baseversion}</artifactId>
-  		<version>3.0.1</version>
-  		<scope>test</scope>
-  	</dependency>
-  	<dependency>
-  		<groupId>org.scalatest</groupId>
-  		<artifactId>scalatest_${scala.baseversion}</artifactId>
-  		<version>3.0.1</version>
-  		<scope>test</scope>
-  	</dependency>
-  	
+      <groupId>org.scala-lang</groupId>
+      <artifactId>scala-library</artifactId>
+      <version>${scala.fullversion}</version>
+    </dependency>
+
+    <!-- Testing -->
+    <dependency>
+      <groupId>org.scalactic</groupId>
+      <artifactId>scalactic_${scala.baseversion}</artifactId>
+      <version>3.0.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.scalatest</groupId>
+      <artifactId>scalatest_${scala.baseversion}</artifactId>
+      <version>3.0.1</version>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
-  
+
   <build>
     <sourceDirectory>src/main/scala</sourceDirectory>
     <testSourceDirectory>src/test/scala</testSourceDirectory>
-  	
+
     <plugins>
 
-	  <plugin>
+      <!-- Scala compilation -->
+      <plugin>
         <groupId>net.alchim31.maven</groupId>
         <artifactId>scala-maven-plugin</artifactId>
         <version>3.2.1</version>
-		<executions>
-			<execution>
-				<id>scala-compile-first</id>
-				<phase>process-resources</phase>
-				<goals>
-					<goal>add-source</goal>
-					<goal>compile</goal>
-				</goals>
-			</execution>
-			<execution>
-				<id>scala-test-compile</id>
-				<phase>process-test-resources</phase>
-				<goals>
-					<goal>testCompile</goal>
-				</goals>
-			</execution>
-		</executions>
+        <executions>
+          <execution>
+            <id>scala-compile-first</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>add-source</goal>
+              <goal>compile</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>scala-test-compile</id>
+            <phase>process-test-resources</phase>
+            <goals>
+              <goal>testCompile</goal>
+            </goals>
+          </execution>
+        </executions>
         <configuration>
           <scalaVersion>${scala.fullversion}</scalaVersion>
         </configuration>
       </plugin>
-      
-	  <!-- Testing -->
-	  <plugin>
-		<groupId>org.scalatest</groupId>
-		<artifactId>scalatest-maven-plugin</artifactId>
-		<version>1.0</version>
-		<configuration>
-		  <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
-		  <junitxml>.</junitxml>
-		  <filereports>WDF TestSuite.txt</filereports>
-		</configuration>
-		<executions>
-		  <execution>
-		    <goals>
-		      <goal>test</goal>
-		    </goals>
-		  </execution>
-		</executions>
-	  </plugin>
+
+      <!-- Testing -->
+      <plugin>
+        <groupId>org.scalatest</groupId>
+        <artifactId>scalatest-maven-plugin</artifactId>
+        <version>1.0</version>
+        <configuration>
+          <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
+          <junitxml>.</junitxml>
+          <filereports>WDF TestSuite.txt</filereports>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>test</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
       <plugin> <!-- disable surefire (only run scala tests) -->
-		<groupId>org.apache.maven.plugins</groupId>
-		<artifactId>maven-surefire-plugin</artifactId>
-		<version>2.7</version>
-		<configuration>
-			<skipTests>true</skipTests>
-		</configuration>
-	  </plugin>
-	  
-	  <!-- Java compilation -->
-	  <plugin>
-		<groupId>org.codehaus.mojo</groupId>
-		<artifactId>build-helper-maven-plugin</artifactId>
-		<version>3.0.0</version>
-		<executions>
-			<execution>
-				<phase>generate-sources</phase>
-				<goals>
-					<goal>add-source</goal>
-				</goals>
-				<configuration>
-					<sources>
-						<source>src/main/java</source>
-					</sources>
-				</configuration>
-			</execution>
-		</executions>
-	</plugin>
-	  <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.7</version>
+        <configuration>
+          <skipTests>true</skipTests>
+        </configuration>
+      </plugin>
+
+      <!-- Java compilation -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>3.0.0</version>
+        <executions>
+          <execution>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>add-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>src/main/java</source>
+              </sources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.6.1</version>
@@ -131,15 +133,15 @@
           <target>1.8</target>
         </configuration>
         <executions>
-		  <execution>
-		    <goals>
-		      <goal>compile</goal>
-		    </goals>
-		  </execution>
-		</executions>
+          <execution>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
-		
+
     </plugins>
   </build>
-  
+
 </project>
