@@ -3,12 +3,10 @@ package exp.util
 import java.io.File
 import java.io.PrintWriter
 import java.util.Calendar
-import java.util.function.Consumer
 
 import scala.io.Source
 import scala.collection.immutable.ListMap
 import scala.collection.parallel.mutable.ParArray
-import scala.collection.JavaConverters._
 import scala.collection.parallel.ForkJoinTaskSupport
 import scala.concurrent.forkjoin.ForkJoinPool
 
@@ -41,6 +39,7 @@ object Properties {
   val EXPERIMENT_NAME = "@experimentName"
   val START_TIME = "@startTime"
   val BASE_PROPERTIES = "@baseProperties"
+  
   val PARALLELISM_LEVEL = "parallelismLevel"
 
   /**
@@ -60,8 +59,6 @@ object Properties {
       (EXPERIMENT_NAME -> name) +
       (START_TIME -> Calendar.getInstance().getTime().toString()) +
       (BASE_PROPERTIES -> path)
-
-  def readJava(path: String, name: String) = read(path, name).asJava
   
   /**
    * Write a property mapping to a file
@@ -80,25 +77,5 @@ object Properties {
         w.close
     }
   }
-
-  def writeJava(path: String, p: java.util.Map[String, String]) =
-    write(path, ListMap(p.entrySet().asScala.toSeq.map(f => f.getKey -> f.getValue):_*))
-
-  /**
-   * Conduct an experiment with Java
-   *
-   * @param path path of the properties input file
-   * @param name name of the experiment
-   * @param splitOn properties to split for individual experiments
-   * @param defaultParLevel level of parallelism (how many experiments are conducted in parallel)
-   * @param enforceParLevel if false, defaultParLevel is overwritten by the property 'parallelismLevel' (if present)
-   * @param forEach Java function conducting each individual experiment
-   */
-  def conductJava(path: String, name: String, splitOn: java.util.List[String],
-                  defaultParLevel: Int, enforceParLevel: Boolean,
-                  forEach: java.util.function.Consumer[java.util.Map[String, String]]) =
-    read(path, name).splitOn(splitOn.asScala).
-      par.level(defaultParLevel, enforceParLevel).
-      foreach(f => forEach.accept(f.asJava))
 
 }
