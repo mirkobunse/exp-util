@@ -10,14 +10,12 @@ public class JavaExample {
 	
 	public static void main(String[] args) {
 		
-		
-		
 		List<String> splitOn = new ArrayList<>();
 		splitOn.add("seed");
 		Properties.conductJava("src/main/resources/example.properties", "JavaExample", splitOn, 2, false, c -> {
 
 			/*
-			 * Specify individual experiments inside foreach()
+			 * Specify individual experiments inside Consumer function
 			 */
 
 			// print what you do (apply retrieves property)
