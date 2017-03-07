@@ -13,13 +13,6 @@
     <scala.fullversion>[${scala.baseversion}.7,${scala.baseversion}.8]</scala.fullversion>
   </properties>
 
-  <distributionManagement>
-    <repository>
-      <id>jitpack.io</id>
-      <url>https://jitpack.io</url>
-    </repository>
-  </distributionManagement>
-
   <dependencies>
 
     <!-- Name the obvious for Java projects using this -->
