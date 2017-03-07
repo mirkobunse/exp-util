@@ -91,6 +91,7 @@ object Properties {
    * @param name name of the experiment
    * @param splitOn properties to split for individual experiments
    * @param defaultParLevel level of parallelism (how many experiments are conducted in parallel)
+   * @param enforceParLevel if false, defaultParLevel is overwritten by the property 'parallelismLevel' (if present)
    * @param forEach Java function conducting each individual experiment
    */
   def conductJava(path: String, name: String, splitOn: java.util.List[String],
