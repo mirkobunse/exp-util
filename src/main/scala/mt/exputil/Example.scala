@@ -26,7 +26,7 @@ object Example {
         // generate "num" random numbers ranging up to a value of "max"
         val rng = new Random(seed)
         for (i <- 1 to (m apply "num").toInt)
-          println("...generated %f".format(rng.nextDouble * (m apply "max").toDouble))
+          println("...%d generated %f".format(seed, rng.nextDouble * (m apply "max").toDouble))
 
       })
   
