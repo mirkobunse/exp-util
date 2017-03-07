@@ -14,7 +14,7 @@ class Properties
 
 object Properties {
   
-  implicit class PropertyListMap(val m: ListMap[String,String]) {
+  implicit class PropertyListMap(val m: ListMap[String, String]) {
     def splitOn(key: String) = m.apply(key).split(",").map(f => (m - key) + (key -> f))
     def splitOn(keys: Seq[String]): Array[ListMap[String, String]] = 
       if (keys.length == 1) m.splitOn(keys(0)) else m.splitOn(keys(0)).splitOn(keys.slice(1, keys.length))
@@ -27,12 +27,12 @@ object Properties {
       if (keys.length == 1) a.splitOn(keys(0)) else a.splitOn(keys(0)).splitOn(keys.slice(1, keys.length))
   }
   
-  implicit class ConfParArray(val p: ParArray[ListMap[String,String]]) {
-    private[this] def level(parallelism: Int): ParArray[ListMap[String,String]] = {
+  implicit class ConfParArray(val p: ParArray[ListMap[String, String]]) {
+    private[this] def level(parallelism: Int): ParArray[ListMap[String, String]] = {
       p.tasksupport = new ForkJoinTaskSupport(new ForkJoinPool(parallelism))
       p
     }
-    def level(default: Int, enforce: Boolean): ParArray[ListMap[String,String]] =
+    def level(default: Int, enforce: Boolean): ParArray[ListMap[String, String]] =
       level(if (enforce) default else p(0).getOrElse(PARALLELISM_LEVEL, default).toString.toInt)
   }
 
@@ -54,7 +54,10 @@ object Properties {
       .filter(p => p.trim.length > 0 && !p.startsWith("#"))
       .map(f => {
         val s = f.split("=")
-        (s(0).trim(), s(1).trim())
+        (s(0).trim(), s(1).trim() match {
+          case s if s.matches("[0-9]+\\s*to\\s*[0-9]+") => "RANGE"
+          case somethingElse => somethingElse
+        })
       }).toSeq:_*) +      // ListMap(..toSeq:_*) preserves order
       (EXPERIMENT_NAME -> name) +
       (START_TIME -> Calendar.getInstance().getTime().toString()) +
