@@ -52,7 +52,7 @@ object Properties {
    */
   def read(path: String, name: String) =
     ListMap(Source.fromFile(path).getLines()
-      .filter(p => !p.startsWith("#"))
+      .filter(p => p.trim.length > 0 && !p.startsWith("#"))
       .map(f => {
         val s = f.split("=")
         (s(0).trim(), s(1).trim())
