@@ -1,7 +1,9 @@
 # Utilities for experiments
 
-Reoccuring patterns of experimental setups, like reading and splitting property files
-into experimental units and executing them in parallel.
+Reoccuring patterns of experimental setups:
+
+* Reading and splitting property files into experimental units
+* Executing experimental units in parallel
 
 
 
@@ -31,4 +33,6 @@ will require the following references in your pom.xml:
 </dependencies>
 ```
 
-Have a look at the Scala and Java examples in `exp.util.example`!
+Take a look at the Scala and Java examples in `exp.util.example` to see how these
+utilities push your experimental setups.
+
