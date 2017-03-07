@@ -1,7 +1,8 @@
-package mt.exputil
+package exp.util.example
 
 import scala.util.Random
-import mt.exputil.Properties._  // import implicit conversions
+import exp.util.Properties
+import exp.util.Properties._  // import implicit conversions
 
 /**
  * Example on how to use the exp-util Properties object in Scala.

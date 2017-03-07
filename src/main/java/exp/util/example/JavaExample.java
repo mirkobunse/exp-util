@@ -1,8 +1,10 @@
-package mt.exputil;
+package exp.util.example;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import exp.util.*;
 
 public class JavaExample {
 	
@@ -12,7 +14,7 @@ public class JavaExample {
 		
 		List<String> splitOn = new ArrayList<>();
 		splitOn.add("seed");
-		Properties.conductJava("src/main/resources/example.properties", "Example", splitOn, 2, false, c -> {
+		Properties.conductJava("src/main/resources/example.properties", "JavaExample", splitOn, 2, false, c -> {
 
 			/*
 			 * Specify individual experiments inside foreach()

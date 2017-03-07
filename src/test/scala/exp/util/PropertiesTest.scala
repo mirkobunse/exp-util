@@ -1,8 +1,8 @@
-package mt.exputil
+package exp.util
 
 import org.scalatest._
 import java.io.FileNotFoundException
-import mt.exputil.Properties._
+import exp.util.Properties._
 
 class PropertiesTest extends FlatSpec with Matchers {
 
