@@ -70,7 +70,11 @@ object Properties {
         (split(0), split(1) match {
           case matchRange(lower, upper) => RangeProperty(lower.toInt to upper.toInt)
           case s if isListString(s)     => ListProperty(s.substring(1, s.length()-1).split(",").
-                                                        map(f => StringProperty(f.trim)) toList)
+                                                        map(f => f match {
+                                                          case g if isIntString(g)    => IntProperty(f.trim.toInt)
+                                                          case g if isDoubleString(g) => DoubleProperty(f.trim.toDouble)
+                                                          case somethingElse          => StringProperty(somethingElse)
+                                                        }) toList)
           case s if isIntString(s)      => IntProperty(s.toInt)
           case s if isDoubleString(s)   => DoubleProperty(s.toDouble)
           case somethingElse            => StringProperty(somethingElse)

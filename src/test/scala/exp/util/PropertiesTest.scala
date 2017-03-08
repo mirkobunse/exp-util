@@ -16,7 +16,7 @@ class PropertiesTest extends FlatSpec with Matchers {
     p apply "someInt"    shouldBe 4
     p apply "someDouble" shouldBe 4.0
     p apply "split1"  shouldEqual (1 to 3)
-    (p apply "split2").asList.zipWithIndex.foreach(z => z._1 shouldBe (z._2+1).toString)
+    (p apply "split2").asList.zipWithIndex.foreach(z => z._1 shouldBe (z._2+1).toDouble)
   }
 
   it should "add runtime properties" in {
@@ -41,7 +41,7 @@ class PropertiesTest extends FlatSpec with Matchers {
       f._1 apply "someInt"    shouldBe 4
       f._1 apply "someDouble" shouldBe 4.0
       f._1 apply "split1"     shouldBe (f._2+1)                // split
-      (f._1 apply "split2").asList.zipWithIndex.foreach(z => z._1 shouldBe (z._2+1).toString)
+      (f._1 apply "split2").asList.zipWithIndex.foreach(z => z._1 shouldBe (z._2+1).toDouble)
       f._1 apply Properties.EXPERIMENT_NAME shouldBe name
       f._1 apply Properties.BASE_PROPERTIES shouldBe path
       f._1 apply Properties.START_TIME
@@ -56,7 +56,7 @@ class PropertiesTest extends FlatSpec with Matchers {
       f apply "someInt"    shouldBe 4
       f apply "someDouble" shouldBe 4.0
       f.apply("split1").toString.length shouldBe 1  // split
-      f.apply("split2").toString.length shouldBe 1  // split, too
+      f.apply("split2").toString.length shouldBe 3  // split, too  (double string: length 3)
       f apply Properties.EXPERIMENT_NAME shouldBe name
       f apply Properties.BASE_PROPERTIES shouldBe path
       f apply Properties.START_TIME
