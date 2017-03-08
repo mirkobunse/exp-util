@@ -55,8 +55,10 @@ object Properties {
    */
   def read(path: String, name: String): ListMap[String, Property] = {
     
-    val matchRange   = """([0-9]+)\s*to\s*([0-9]+)""".r
-    val isListString = (s: String) => s.matches("""\{.*\}""")
+    val matchRange     = """([0-9]+)\s*to\s*([0-9]+)""".r
+    val isListString   = (s: String) => s.matches("""\{.*\}""")
+    val isIntString    = (s: String) => scala.util.Try(s.toInt).isSuccess
+    val isDoubleString = (s: String) => scala.util.Try(s.toDouble).isSuccess
     
     ListMap(Source.fromFile(path).getLines()
       .filter(p => p.trim.length > 0 && !p.startsWith("#"))  // filter comment lines
@@ -69,6 +71,8 @@ object Properties {
           case matchRange(lower, upper) => RangeProperty(lower.toInt to upper.toInt)
           case s if isListString(s)     => ListProperty(s.substring(1, s.length()-1).split(",").
                                                         map(f => StringProperty(f.trim)) toList)
+          case s if isIntString(s)      => IntProperty(s.toInt)
+          case s if isDoubleString(s)   => DoubleProperty(s.toDouble)
           case somethingElse            => StringProperty(somethingElse)
         })
         

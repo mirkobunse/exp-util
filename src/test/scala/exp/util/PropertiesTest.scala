@@ -12,9 +12,10 @@ class PropertiesTest extends FlatSpec with Matchers {
   val p       = Properties.read(path, name) + ("myProp" -> StringProperty("myVal"))
 
   "Properties" should "read specified properties" in {
-    p apply "prop1"    shouldBe "abc"
-    p apply "property" shouldBe "4"
-    p apply "split1"   shouldEqual (1 to 3)
+    p apply "prop1"      shouldBe "abc"
+    p apply "someInt"    shouldBe 4
+    p apply "someDouble" shouldBe 4.0
+    p apply "split1"  shouldEqual (1 to 3)
     (p apply "split2").asList.zipWithIndex.foreach(z => z._1 shouldBe (z._2+1).toString)
   }
 
@@ -36,28 +37,30 @@ class PropertiesTest extends FlatSpec with Matchers {
   
   it should "implicitly split on 'split1' but not on 'split2'" in {
     p.splitOn("split1").zipWithIndex.foreach(f => {
-      f._1 apply "prop1"    shouldBe "abc"
-      f._1 apply "property" shouldBe "4"
-      f._1 apply "split1"   shouldBe (f._2+1)                // split
+      f._1 apply "prop1"      shouldBe "abc"
+      f._1 apply "someInt"    shouldBe 4
+      f._1 apply "someDouble" shouldBe 4.0
+      f._1 apply "split1"     shouldBe (f._2+1)                // split
       (f._1 apply "split2").asList.zipWithIndex.foreach(z => z._1 shouldBe (z._2+1).toString)
       f._1 apply Properties.EXPERIMENT_NAME shouldBe name
       f._1 apply Properties.BASE_PROPERTIES shouldBe path
       f._1 apply Properties.START_TIME
-      f._1 apply "myProp"   shouldBe "myVal"
+      f._1 apply "myProp"  shouldBe "myVal"
       a[NoSuchElementException] shouldBe thrownBy(f._1 apply "missing")
     })
   }
   
   it should "implicitly split on both 'split1' and 'split2'" in {
     p.splitOn(Seq("split1", "split2")).foreach(f => {
-      f apply "prop1"          shouldBe "abc"
-      f apply "property"       shouldBe "4"
+      f apply "prop1"      shouldBe "abc"
+      f apply "someInt"    shouldBe 4
+      f apply "someDouble" shouldBe 4.0
       f.apply("split1").toString.length shouldBe 1  // split
       f.apply("split2").toString.length shouldBe 1  // split, too
       f apply Properties.EXPERIMENT_NAME shouldBe name
       f apply Properties.BASE_PROPERTIES shouldBe path
       f apply Properties.START_TIME
-      f apply "myProp"         shouldBe "myVal"
+      f apply "myProp"  shouldBe "myVal"
       a[NoSuchElementException] shouldBe thrownBy(f apply "missing")
     })
   }
