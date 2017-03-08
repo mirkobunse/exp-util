@@ -14,8 +14,8 @@ class PropertiesTest extends FlatSpec with Matchers {
   "Properties" should "read specified properties" in {
     p apply "prop1"    shouldBe "abc"
     p apply "property" shouldBe "4"
-    p apply "split1"   shouldEqual (1 to 5)
-    p apply "split2"   shouldEqual List(1, 2, 3, 4, 5)
+    p apply "split1"   shouldEqual (1 to 3)
+    (p apply "split2").asList.zipWithIndex.foreach(z => z._1 shouldBe (z._2+1).toString)
   }
 
   it should "add runtime properties" in {
@@ -39,7 +39,7 @@ class PropertiesTest extends FlatSpec with Matchers {
       f._1 apply "prop1"    shouldBe "abc"
       f._1 apply "property" shouldBe "4"
       f._1 apply "split1"   shouldBe (f._2+1)                // split
-      f._1 apply "split2"   shouldEqual List(1, 2, 3, 4, 5)  // do not split
+      (f._1 apply "split2").asList.zipWithIndex.foreach(z => z._1 shouldBe (z._2+1).toString)
       f._1 apply Properties.EXPERIMENT_NAME shouldBe name
       f._1 apply Properties.BASE_PROPERTIES shouldBe path
       f._1 apply Properties.START_TIME
@@ -66,7 +66,7 @@ class PropertiesTest extends FlatSpec with Matchers {
   JavaProperties.write(outpath, JavaProperties.read(path, name))
   
   // split and use implicit write method to write each split result
-  p.splitOn("split1").zipWithIndex.foreach(f =>
+  p.splitOn(Seq("split1","split2")).zipWithIndex.foreach(f =>
     f._1.write(outpath.replace(".properties", f._2 + ".properties")))
 
 }

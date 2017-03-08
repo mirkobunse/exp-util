@@ -18,7 +18,7 @@ public class JavaExample {
 			/*
 			 * Specify individual experiments inside Consumer function
 			 */
-
+						
 			// print what you do (apply retrieves property)
 			int seed = Integer.parseInt(c.get("seed").toString());
 			System.out.println("Conducting experiment '" + c.get(Properties.EXPERIMENT_NAME()) +
