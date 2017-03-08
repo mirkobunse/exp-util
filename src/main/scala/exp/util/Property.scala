@@ -19,8 +19,10 @@ case class IntProperty(value: Int)             extends Property {
 
 case class ListProperty(value: List[Property]) extends Property {
   override def toString = value.toString
+  override def equals(that: Any) = value equals that
 }
 
 case class RangeProperty(value: Range)         extends Property {
   override def toString = value.toString
+  override def equals(that: Any) = value equals that
 }
