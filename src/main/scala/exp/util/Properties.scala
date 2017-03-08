@@ -14,25 +14,29 @@ class Properties
 
 object Properties {
   
-  implicit class PropertyListMap(val m: ListMap[String,String]) {
-    def splitOn(key: String) = m.apply(key).split(",").map(f => (m - key) + (key -> f))
-    def splitOn(keys: Seq[String]): Array[ListMap[String, String]] = 
+  implicit class PropertyListMap(val m: ListMap[String, Property]) {
+    def splitOn(key: String) = m apply key match {
+      case ListProperty(value)  => value.map(f => (m - key) + (key -> f)).toArray
+      case RangeProperty(value) => value.toList.map(f => (m - key) + (key -> IntProperty(f))).toArray
+      case _ => Array(m)
+    }
+    def splitOn(keys: Seq[String]): Array[ListMap[String, Property]] = 
       if (keys.length == 1) m.splitOn(keys(0)) else m.splitOn(keys(0)).splitOn(keys.slice(1, keys.length))
     def write(path: String)  = Properties.write(path, m)
   }
   
-  implicit class PropertyListMapArray(val a: Array[ListMap[String, String]]) {
-    def splitOn(key: String) = a.flatMap(f => f.splitOn(key))
-    def splitOn(keys: Seq[String]): Array[ListMap[String, String]] = 
+  implicit class PropertyListMapArray(val a: Array[ListMap[String, Property]]) {
+    def splitOn(key: String) = a.flatMap(_.splitOn(key))
+    def splitOn(keys: Seq[String]): Array[ListMap[String, Property]] = 
       if (keys.length == 1) a.splitOn(keys(0)) else a.splitOn(keys(0)).splitOn(keys.slice(1, keys.length))
   }
   
-  implicit class ConfParArray(val p: ParArray[ListMap[String,String]]) {
-    private[this] def level(parallelism: Int): ParArray[ListMap[String,String]] = {
+  implicit class ConfParArray(val p: ParArray[ListMap[String, Property]]) {
+    private[this] def level(parallelism: Int): ParArray[ListMap[String, Property]] = {
       p.tasksupport = new ForkJoinTaskSupport(new ForkJoinPool(parallelism))
       p
     }
-    def level(default: Int, enforce: Boolean): ParArray[ListMap[String,String]] =
+    def level(default: Int, enforce: Boolean): ParArray[ListMap[String, Property]] =
       level(if (enforce) default else p(0).getOrElse(PARALLELISM_LEVEL, default).toString.toInt)
   }
 
@@ -49,16 +53,16 @@ object Properties {
    * @param name name of the experiment
    * @return property mapping specified in file
    */
-  def read(path: String, name: String) =
+  def read(path: String, name: String): ListMap[String, Property] =
     ListMap(Source.fromFile(path).getLines()
       .filter(p => p.trim.length > 0 && !p.startsWith("#"))
       .map(f => {
         val s = f.split("=")
-        (s(0).trim(), s(1).trim())
+        (s(0).trim(), StringProperty(s(1).trim()))
       }).toSeq:_*) +      // ListMap(..toSeq:_*) preserves order
-      (EXPERIMENT_NAME -> name) +
-      (START_TIME -> Calendar.getInstance().getTime().toString()) +
-      (BASE_PROPERTIES -> path)
+      (EXPERIMENT_NAME -> StringProperty(name)) +
+      (START_TIME      -> StringProperty(Calendar.getInstance().getTime().toString())) +
+      (BASE_PROPERTIES -> StringProperty(path))
   
   /**
    * Write a property mapping to a file
@@ -66,7 +70,7 @@ object Properties {
    * @param path path of the output file
    * @param p property mapping
    */
-  def write(path: String, p: Map[String, String]) {
+  def write(path: String, p: Map[String, Property]) {
     val l = p.keysIterator.map(_.length).max
     val w = new PrintWriter(new File(path))
     try {

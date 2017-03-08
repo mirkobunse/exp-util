@@ -9,7 +9,7 @@ class PropertiesTest extends FlatSpec with Matchers {
   val path    = "src/test/resources/test.properties"
   val outpath = "target/testout.properties"
   val name    = "PropertiesTest"
-  val p       = Properties.read(path, name) + ("myProp" -> "myVal")
+  val p       = Properties.read(path, name) + ("myProp" -> StringProperty("myVal"))
 
   "Properties" should "read specified properties" in {
     p apply "prop1"    shouldBe "abc"
@@ -52,8 +52,8 @@ class PropertiesTest extends FlatSpec with Matchers {
     p.splitOn(Seq("split1", "split2")).foreach(f => {
       f apply "prop1"          shouldBe "abc"
       f apply "property"       shouldBe "4"
-      f.apply("split1").length shouldBe 1  // split
-      f.apply("split2").length shouldBe 1  // split, too
+      f.apply("split1").toString.length shouldBe 1  // split
+      f.apply("split2").toString.length shouldBe 1  // split, too
       f apply Properties.EXPERIMENT_NAME shouldBe name
       f apply Properties.BASE_PROPERTIES shouldBe path
       f apply Properties.START_TIME
