@@ -49,19 +49,22 @@ object Properties {
    * @param name name of the experiment
    * @return property mapping specified in file
    */
-  def read(path: String, name: String) =
+    def read(path: String, name: String) =
     ListMap(Source.fromFile(path).getLines()
       .filter(p => p.trim.length > 0 && !p.startsWith("#"))
       .map(f => {
         val s = f.split("=")
         (s(0).trim(), s(1).trim() match {
-          case s if s.matches("[0-9]+\\s*to\\s*[0-9]+") => "RANGE"
+          case _matchRange(lower, upper)    => (lower.toInt to upper.toInt toList) toString
+          case s if s.matches("""\{.*\}""") => (s.substring(1, s.length()-1).split(",").map(_.trim) toList) toString
           case somethingElse => somethingElse
         })
       }).toSeq:_*) +      // ListMap(..toSeq:_*) preserves order
       (EXPERIMENT_NAME -> name) +
       (START_TIME -> Calendar.getInstance().getTime().toString()) +
       (BASE_PROPERTIES -> path)
+      
+  val _matchRange = """([0-9]+)\s*to\s*([0-9]+)""".r
   
   /**
    * Write a property mapping to a file
