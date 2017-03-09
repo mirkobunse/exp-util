@@ -10,7 +10,7 @@ object JavaProperties {
 
   def read(path: String, name: String) = Properties.read(path, name).asJava
 
-  def write(path: String, p: java.util.Map[String, Property]) =
+  def write(path: String, p: java.util.Map[String, String]) =
     Properties.write(path, ListMap(p.entrySet().asScala.toSeq.map(f => f.getKey -> f.getValue): _*))
 
   /**
@@ -20,12 +20,13 @@ object JavaProperties {
    * @param name name of the experiment
    * @param splitOn properties to split for individual experiments
    * @param defaultParLevel level of parallelism (how many experiments are conducted in parallel)
-   * @param enforceParLevel if false, defaultParLevel is overwritten by the property 'parallelismLevel' (if present)
+   * @param enforceParLevel if false, defaultParLevel is overwritten by the property 'parallelismLevel'
+   *                        (if present)
    * @param experiment Java function conducting each individual experiment
    */
   def runExperiments(path: String, name: String, splitOn: java.util.List[String],
                   defaultParLevel: Int, enforceParLevel: Boolean,
-                  experiment: java.util.function.Consumer[java.util.Map[String, Property]]) =
+                  experiment: java.util.function.Consumer[java.util.Map[java.lang.String,java.lang.String]]) =
     Properties.read(path, name).splitOn(splitOn.asScala).
       par.level(defaultParLevel, enforceParLevel).
       foreach(f => experiment.accept(f.asJava))

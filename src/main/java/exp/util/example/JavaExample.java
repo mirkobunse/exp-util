@@ -13,7 +13,8 @@ public class JavaExample {
 		
 		List<String> splitOn = new ArrayList<>();
 		splitOn.add("seed");
-		JavaProperties.runExperiments("src/main/resources/example.properties", "JavaExample", splitOn, 2, false, c -> {
+		JavaProperties.runExperiments("src/main/resources/example.properties",
+				"JavaExample", splitOn, 2, false, c -> {
 
 			/*
 			 * Specify individual experiments inside Consumer function

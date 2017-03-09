@@ -9,35 +9,69 @@ import scala.collection.immutable.ListMap
 import scala.collection.parallel.mutable.ParArray
 import scala.collection.parallel.ForkJoinTaskSupport
 import scala.concurrent.forkjoin.ForkJoinPool
+import scala.util.Try
 
 class Properties
 
 object Properties {
   
-  implicit class PropertyListMap(val m: ListMap[String, Property]) {
-    def splitOn(key: String) = m apply key match {
-      case ListProperty(value)  => value.map(f => (m - key) + (key -> f)).toArray
-      case RangeProperty(value) => value.toList.map(f => (m - key) + (key -> IntProperty(f))).toArray
+  implicit class PropertyListMap(val m: ListMap[String, String]) {
+
+    val _matchRange = """([0-9]+)\s*to\s*([0-9]+)""".r
+    val _matchList = """\{\s*(.*)\s*\}""".r
+
+    def getAsString(key: String) = m.get(key)
+
+    def getAsDouble(key: String): Option[Double] = m.get(key) match {
+      case Some(property) if Try(property.toDouble).isSuccess => Option(property.toDouble)
+      case _ => None
+    }
+
+    def getAsInt(key: String): Option[Int] = m.get(key) match {
+      case Some(property) if Try(property.toInt).isSuccess => Option(property.toInt)
+      case _ => None
+    }
+
+    def getAsList(key: String): Option[List[String]] = m.get(key) match {
+      case Some(v) => v match {
+        case _matchRange(l, u) => Option(l.toInt to u.toInt map (_.toString) toList)
+        case _matchList(inner) => Option(inner split (",") toList)
+        case _ => None
+      }
+      case _ => None
+    }
+  
+    def splitOn(key: String) = m getAsList key match {
+      case Some(list) => list.map(f => (m - key) + (key -> f) ) toArray
       case _ => Array(m)
     }
-    def splitOn(keys: Seq[String]): Array[ListMap[String, Property]] = 
+    
+    def splitOn(keys: Seq[String]): Array[ListMap[String, String]] = 
       if (keys.length == 1) m.splitOn(keys(0)) else m.splitOn(keys(0)).splitOn(keys.slice(1, keys.length))
+      
     def write(path: String)  = Properties.write(path, m)
+    
   }
   
-  implicit class PropertyListMapArray(val a: Array[ListMap[String, Property]]) {
+  implicit class PropertyListMapArray(val a: Array[ListMap[String, String]]) {
+    
     def splitOn(key: String) = a.flatMap(_.splitOn(key))
-    def splitOn(keys: Seq[String]): Array[ListMap[String, Property]] = 
+    
+    def splitOn(keys: Seq[String]): Array[ListMap[String, String]] = 
       if (keys.length == 1) a.splitOn(keys(0)) else a.splitOn(keys(0)).splitOn(keys.slice(1, keys.length))
+      
   }
   
-  implicit class ConfParArray(val p: ParArray[ListMap[String, Property]]) {
-    private[this] def level(parallelism: Int): ParArray[ListMap[String, Property]] = {
+  implicit class ConfParArray(val p: ParArray[ListMap[String, String]]) {
+    
+    private[this] def level(parallelism: Int): ParArray[ListMap[String, String]] = {
       p.tasksupport = new ForkJoinTaskSupport(new ForkJoinPool(parallelism))
       p
     }
-    def level(default: Int, enforce: Boolean): ParArray[ListMap[String, Property]] =
+    
+    def level(default: Int, enforce: Boolean): ParArray[ListMap[String, String]] =
       level(if (enforce) default else p(0).getOrElse(PARALLELISM_LEVEL, default).toString.toInt)
+      
   }
 
   val EXPERIMENT_NAME = "@experimentName"
@@ -53,39 +87,17 @@ object Properties {
    * @param name name of the experiment
    * @return property mapping specified in file
    */
-  def read(path: String, name: String): ListMap[String, Property] = {
-    
-    val matchRange     = """([0-9]+)\s*to\s*([0-9]+)""".r
-    val isListString   = (s: String) => s.matches("""\{.*\}""")
-    val isIntString    = (s: String) => scala.util.Try(s.toInt).isSuccess
-    val isDoubleString = (s: String) => scala.util.Try(s.toDouble).isSuccess
-    
+  def read(path: String, name: String): ListMap[String, String] =
     ListMap(Source.fromFile(path).getLines()
       .filter(p => p.trim.length > 0 && !p.startsWith("#"))  // filter comment lines
       .map(f => {
-        
         // split into property name and value
-        val split = f.split("=").map(_.trim)
-        
-        (split(0), split(1) match {
-          case matchRange(lower, upper) => RangeProperty(lower.toInt to upper.toInt)
-          case s if isListString(s)     => ListProperty(s.substring(1, s.length()-1).split(",").
-                                                        map(f => f match {
-                                                          case g if isIntString(g)    => IntProperty(f.trim.toInt)
-                                                          case g if isDoubleString(g) => DoubleProperty(f.trim.toDouble)
-                                                          case somethingElse          => StringProperty(somethingElse)
-                                                        }) toList)
-          case s if isIntString(s)      => IntProperty(s.toInt)
-          case s if isDoubleString(s)   => DoubleProperty(s.toDouble)
-          case somethingElse            => StringProperty(somethingElse)
-        })
-        
+        val s = f.split("=").map(_.trim)
+        (s(0), s(1))
       }).toSeq:_*) +      // ListMap(..toSeq:_*) preserves order
-      (EXPERIMENT_NAME -> StringProperty(name)) +
-      (START_TIME      -> StringProperty(Calendar.getInstance().getTime().toString())) +
-      (BASE_PROPERTIES -> StringProperty(path))
-      
-  }
+      (EXPERIMENT_NAME -> name) +
+      (START_TIME      -> Calendar.getInstance().getTime().toString()) +
+      (BASE_PROPERTIES -> path)
   
   /**
    * Write a property mapping to a file
@@ -93,7 +105,7 @@ object Properties {
    * @param path path of the output file
    * @param p property mapping
    */
-  def write(path: String, p: Map[String, Property]) {
+  def write(path: String, p: Map[String, String]) {
     val l = p.keysIterator.map(_.length).max
     val w = new PrintWriter(new File(path))
     try {
