@@ -4,13 +4,14 @@ Reoccuring patterns of experimental setups:
 
 * Reading and splitting property files into experimental units
 * Executing experimental units in parallel
+* Enriching property files by hard-coded parameters to keep track of
 
 
 
 ## Usage
 
-The project artifact is built and maintained by [jitpack](https://jitpack.io/). You
-will require the following references in your pom.xml:
+The project artifact is built and maintained by [jitpack](https://jitpack.io/). Your
+`pom.xml` only requires the following references:
 
 ```xml
 <repositories>
@@ -33,6 +34,46 @@ will require the following references in your pom.xml:
 </dependencies>
 ```
 
-Take a look at the Scala and Java examples in `exp.util.example` to see how these
-utilities push your experimental setups.
+You can now parse a property file, split it into experimental units and run these
+units in parallel inside a `foreach` call.
+
+
+
+## Example
+
+In the following example, experimental units are defined by their random number
+generator seed. The property file specifies a range of those seeds, which is split
+to obtain the units.
+The experiments are run with a parallelization level of 2, i.e., 2 threads are used
+running one experimental unit each.
+The argument `m` specifies a mapping from property keys to values that correspond
+to the experimental unit instead of the original property file.
+An implicit type cast allows to get individual properties with certain types 
+(String, Double, Int and List/Range) directly.
+
+```scala
+Properties.read("src/main/resources/example.properties", "Example")
+  .splitOn("seed").par.level(2, false).foreach(m => {
+
+    val seed = m.getAsInt("seed").get
+    println("Conducting experiment '%s' on RNG seed %d...".
+            format(m apply Properties.EXPERIMENT_NAME, seed))
+
+    // generate "num" random numbers ranging up to a value of "max"
+    val rng = new Random(seed)
+    for (i <- 1 to m.getAsInt("num").get)
+      println("...%d generated %f".format(seed, rng.nextDouble * m.getAsDouble("max").get))
+
+  })
+```
+
+If you prefer Java over Scala, take a look at the Java example in `exp.util.example`.
+
+
+
+## Contact
+
+Feel free to contact me with issues, feature ideas and comments!
+
+
 
