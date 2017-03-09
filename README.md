@@ -29,7 +29,7 @@ The project artifact is built and maintained by [jitpack](https://jitpack.io/). 
   <dependency>
     <groupId>com.github.mirkobunse</groupId>
     <artifactId>exp-util</artifactId>
-    <version>0.0.1</version>    <!-- '-SNAPSHOT' for current state of master branch -->
+    <version>v0.0.1-alpha</version>   <!-- '-SNAPSHOT' for current state of master branch -->
   </dependency>
 </dependencies>
 ```
