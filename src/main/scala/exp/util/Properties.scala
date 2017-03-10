@@ -92,7 +92,7 @@ object Properties {
       .filter(p => p.trim.length > 0 && !p.startsWith("#"))  // filter comment lines
       .map(f => {
         // split into property name and value
-        val s = f.split("=").map(_.trim)
+        val s = f.split("=").map(_.split("#")(0).trim)
         (s(0), s(1))
       }).toSeq:_*) +      // ListMap(..toSeq:_*) preserves order
       (EXPERIMENT_NAME -> name) +

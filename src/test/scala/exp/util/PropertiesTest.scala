@@ -18,6 +18,10 @@ class PropertiesTest extends FlatSpec with Matchers {
     p apply "split1"     shouldBe "1 to 3"
     p apply "split2"     shouldBe "{1.0,2.0,3.0,4.0,5.0}"
   }
+  
+  it should "recognize inline comments" in {
+    p apply "comment"    shouldBe "foobar"  // comment not included
+  }
 
   it should "add runtime properties" in {
     p apply Properties.EXPERIMENT_NAME shouldBe name
