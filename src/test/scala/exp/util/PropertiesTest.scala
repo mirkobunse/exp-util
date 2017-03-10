@@ -19,8 +19,18 @@ class PropertiesTest extends FlatSpec with Matchers {
     p apply "split2"     shouldBe "{1.0,2.0,3.0,4.0,5.0}"
   }
   
+  it should "cast properties correctly" in {
+    p.getAsInt("someInt")       should contain(4)    // contain because Option
+    p.getAsDouble("someInt")    should contain(4.0)  // cast
+    p.getAsDouble("someDouble") should contain(4.0)
+    p.getAsList("someDouble")   shouldBe None        // cast not possible
+    p.getAsList("split1").get   should contain allOf("1", "2", "3")
+    p.getAsList("split2").get   should contain allOf("1.0", "2.0", "3.0", "4.0", "5.0")
+    
+  }
+  
   it should "recognize inline comments" in {
-    p apply "comment"    shouldBe "foobar"  // comment not included
+    p apply "comment" shouldBe "foobar"  // comment not included
   }
 
   it should "add runtime properties" in {
