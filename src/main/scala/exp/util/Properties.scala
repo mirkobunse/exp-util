@@ -29,7 +29,9 @@ object Properties {
     
     def splitOn(keys: Seq[String]): Array[ListMap[String, Property]] = 
       if (keys.length == 1) m.splitOn(keys(0)) else m.splitOn(keys(0)).splitOn(keys.slice(1, keys.length))
-      
+    
+    def where(kv: (String, String)) = m + (kv._1 -> new Property(kv._2))
+        
     def write(path: String)  = Properties.write(path, m)
     
   }
@@ -68,17 +70,17 @@ object Properties {
    * @param name name of the experiment
    * @return property mapping specified in file
    */
-  def read(path: String, name: String) =
+  def read(path: String, name: String): ListMap[String, Property] =
     ListMap(Source.fromFile(path).getLines()
       .filter(p => p.trim.length > 0 && !p.startsWith("#"))  // filter comment lines
       .map(f => {
         // split into property name and value
         val s = f.split("=").map(_.split("#")(0).trim)
         (s(0), new Property(s(1)))
-      }).toSeq:_*) +      // ListMap(..toSeq:_*) preserves order
-      (EXPERIMENT_NAME -> new Property(name)) +
-      (START_TIME      -> new Property(Calendar.getInstance().getTime().toString())) +
-      (BASE_PROPERTIES -> new Property(path))
+      }).toSeq:_*) where      // ListMap(..toSeq:_*) preserves order
+      (EXPERIMENT_NAME -> name) where
+      (START_TIME      -> Calendar.getInstance().getTime().toString()) where
+      (BASE_PROPERTIES -> path)
   
   /**
    * Write a property mapping to a file

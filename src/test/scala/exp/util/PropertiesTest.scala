@@ -9,7 +9,7 @@ class PropertiesTest extends FlatSpec with Matchers {
   val path    = "src/test/resources/test.properties"
   val outpath = "target/testout.properties"
   val name    = "PropertiesTest"
-  val p       = Properties.read(path, name) + ("myProp" -> new Property("myVal"))
+  val p       = Properties.read(path, name) where ("myProp" -> "myVal")
 
   "Properties" should "read specified properties" in {
     p getString "prop1"      shouldBe "abc"
