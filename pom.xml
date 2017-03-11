@@ -10,8 +10,8 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <scala.baseversion>2.11</scala.baseversion>
-    <scala.fullversion>[${scala.baseversion}.7,${scala.baseversion}.8]</scala.fullversion>
+    <scala.compat.version>2.11</scala.compat.version>
+    <scala.version>${scala.compat.version}.8</scala.version>
   </properties>
 
   <dependencies>
@@ -20,19 +20,19 @@
     <dependency>
       <groupId>org.scala-lang</groupId>
       <artifactId>scala-library</artifactId>
-      <version>${scala.fullversion}</version>
+      <version>${scala.version}</version>
     </dependency>
 
     <!-- Testing -->
     <dependency>
       <groupId>org.scalactic</groupId>
-      <artifactId>scalactic_${scala.baseversion}</artifactId>
+      <artifactId>scalactic_${scala.compat.version}</artifactId>
       <version>3.0.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.scalatest</groupId>
-      <artifactId>scalatest_${scala.baseversion}</artifactId>
+      <artifactId>scalatest_${scala.compat.version}</artifactId>
       <version>3.0.1</version>
       <scope>test</scope>
     </dependency>
@@ -49,7 +49,7 @@
       <plugin>
         <groupId>net.alchim31.maven</groupId>
         <artifactId>scala-maven-plugin</artifactId>
-        <version>3.2.1</version>
+        <version>3.2.2</version>
         <executions>
           <execution>
             <id>scala-compile-first</id>
@@ -68,7 +68,7 @@
           </execution>
         </executions>
         <configuration>
-          <scalaVersion>${scala.fullversion}</scalaVersion>
+          <scalaVersion>${scala.version}</scalaVersion>
         </configuration>
       </plugin>
 
