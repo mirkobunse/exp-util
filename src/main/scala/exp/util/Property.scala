@@ -1,6 +1,6 @@
 package exp.util
 
-class Property(val s: String) {
+class Property(val s: String) extends Serializable {
 
   def asString() = s
 
