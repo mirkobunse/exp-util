@@ -42,32 +42,36 @@ units in parallel inside a `foreach` call.
 ## Example
 
 In the following example, experimental units are defined by their random number
-generator seed. The property file specifies a range of those seeds, which is split
-to obtain the units.
+generator seed.
+[The property file](https://github.com/mirkobunse/exp-util/blob/master/src/main/resources/example.properties)
+specifies a range of those seeds, which is split to obtain the units.
 The experiments are run with a parallelization level of 2, i.e., 2 threads are used
 running one experimental unit each.
 The argument `m` specifies a mapping from property keys to values that correspond
 to the experimental unit instead of the original property file.
-An implicit type cast allows to get individual properties with certain types 
-(String, Double, Int and List/Range) directly.
+An implicit type cast of the properties map allows to get individual properties
+with certain types (String, Double, Int and List/Range) directly.
 
 ```scala
 Properties.read("src/main/resources/example.properties", "Example")
-  .splitOn("seed").par.level(2, false).foreach(m => {
+      .splitOn("seed").par.level(2, false).foreach(m => {
 
-    val seed = m.getAsInt("seed").get
+    val seed = m getInt "seed"
     println("Conducting experiment '%s' on RNG seed %d...".
-            format(m apply Properties.EXPERIMENT_NAME, seed))
+      format(m getString Properties.EXPERIMENT_NAME, seed))
 
     // generate "num" random numbers ranging up to a value of "max"
     val rng = new Random(seed)
-    for (i <- 1 to m.getAsInt("num").get)
-      println("...%d generated %f".format(seed, rng.nextDouble * m.getAsDouble("max").get))
+    for (i <- 1 to m.getInt("num"))
+      println("...%d generated %f".format(seed, rng.nextDouble * m.getDouble("max")))
 
   })
 ```
 
-If you prefer Java over Scala, take a look at the Java example in `exp.util.example`.
+If you prefer Java over Scala, take a look at
+[the Java example](https://github.com/mirkobunse/exp-util/blob/master/src/main/java/exp/util/example/JavaExample.java)
+
+
 
 
 
