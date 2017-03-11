@@ -55,6 +55,8 @@ object Properties {
     def level(default: Int, enforce: Boolean): ParSeq[ListMap[String, Property]] =
       level(if (enforce) default else Try(p(0).getInt(PARALLELISM_LEVEL)).getOrElse(default))
       
+    def defaultlevel = level(p(0).getInt(PARALLELISM_LEVEL))
+      
   }
 
   val EXPERIMENT_NAME = "@experimentName"

@@ -25,10 +25,21 @@ object JavaProperties {
    * @param experiment Java function conducting each individual experiment
    */
   def runExperiments(path: String, name: String, splitOn: java.util.List[String],
-                  defaultParLevel: Int, enforceParLevel: Boolean,
-                  experiment: java.util.function.Consumer[java.util.Map[String,Property]]) =
-    Properties.read(path, name).splitOn(splitOn.asScala).
-      par.level(defaultParLevel, enforceParLevel).
-      foreach(f => experiment.accept(f.asJava))
+                     defaultParLevel: Integer, enforceParLevel: Boolean,
+                     experiment: java.util.function.Consumer[java.util.Map[String, Property]]) = {
+    val split = Properties.read(path, name).splitOn(splitOn.asScala)
+    val par =
+      if (defaultParLevel != null)
+        split.par.level(defaultParLevel, enforceParLevel)
+      else if (enforceParLevel)
+        split.par.defaultlevel
+      else
+        split
+    par.foreach(f => experiment.accept(f.asJava))
+  }
+  
+  def runExperiments(path: String, name: String, splitOn: java.util.List[String],
+                     experiment: java.util.function.Consumer[java.util.Map[String,Property]]): Unit =
+    runExperiments(path, name, splitOn, null, false, experiment)
 
 }
