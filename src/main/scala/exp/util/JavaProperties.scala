@@ -26,7 +26,7 @@ object JavaProperties {
    */
   def runExperiments(path: String, name: String, splitOn: java.util.List[String],
                   defaultParLevel: Int, enforceParLevel: Boolean,
-                  experiment: java.util.function.Consumer[java.util.Map[java.lang.String,Property]]) =
+                  experiment: java.util.function.Consumer[java.util.Map[String,Property]]) =
     Properties.read(path, name).splitOn(splitOn.asScala).
       par.level(defaultParLevel, enforceParLevel).
       foreach(f => experiment.accept(f.asJava))

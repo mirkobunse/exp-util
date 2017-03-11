@@ -6,7 +6,7 @@ import java.util.Calendar
 
 import scala.io.Source
 import scala.collection.immutable.ListMap
-import scala.collection.parallel.mutable.ParArray
+import scala.collection.parallel.ParSeq
 import scala.collection.parallel.ForkJoinTaskSupport
 import scala.concurrent.forkjoin.ForkJoinPool
 import scala.util.Try
@@ -25,9 +25,9 @@ object Properties {
 
     def getList(key: String) = m.get(key).get.asList
   
-    def splitOn(key: String) = m.getList(key).map(f => (m - key) + (key -> f) ) toArray
+    def splitOn(key: String) = m.getList(key).map(f => (m - key) + (key -> f) ) toSeq
     
-    def splitOn(keys: Seq[String]): Array[ListMap[String, Property]] = 
+    def splitOn(keys: Seq[String]): Seq[ListMap[String, Property]] = 
       if (keys.length == 1) m.splitOn(keys(0)) else m.splitOn(keys(0)).splitOn(keys.slice(1, keys.length))
     
     def where(kv: (String, String)) = m + (kv._1 -> new Property(kv._2))
@@ -36,23 +36,23 @@ object Properties {
     
   }
   
-  implicit class PropertyListMapArray(val a: Array[ListMap[String, Property]]) {
+  implicit class PropertyListMapSeq(val a: Seq[ListMap[String, Property]]) {
     
     def splitOn(key: String) = a.flatMap(_.splitOn(key))
     
-    def splitOn(keys: Seq[String]): Array[ListMap[String, Property]] = 
+    def splitOn(keys: Seq[String]): Seq[ListMap[String, Property]] = 
       if (keys.length == 1) a.splitOn(keys(0)) else a.splitOn(keys(0)).splitOn(keys.slice(1, keys.length))
       
   }
   
-  implicit class ConfParArray(val p: ParArray[ListMap[String, Property]]) {
+  implicit class ConfParSeq(val p: ParSeq[ListMap[String, Property]]) {
     
-    private[this] def level(parallelism: Int): ParArray[ListMap[String, Property]] = {
+    private def level(parallelism: Int): ParSeq[ListMap[String, Property]] = {
       p.tasksupport = new ForkJoinTaskSupport(new ForkJoinPool(parallelism))
       p
     }
     
-    def level(default: Int, enforce: Boolean): ParArray[ListMap[String, Property]] =
+    def level(default: Int, enforce: Boolean): ParSeq[ListMap[String, Property]] =
       level(if (enforce) default else Try(p(0).getInt(PARALLELISM_LEVEL)).getOrElse(default))
       
   }
