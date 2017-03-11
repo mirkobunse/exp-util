@@ -10,7 +10,7 @@ object JavaProperties {
 
   def read(path: String, name: String) = Properties.read(path, name).asJava
 
-  def write(path: String, p: java.util.Map[String, String]) =
+  def write(path: String, p: java.util.Map[String, Property]) =
     Properties.write(path, ListMap(p.entrySet().asScala.toSeq.map(f => f.getKey -> f.getValue): _*))
 
   /**
@@ -26,7 +26,7 @@ object JavaProperties {
    */
   def runExperiments(path: String, name: String, splitOn: java.util.List[String],
                   defaultParLevel: Int, enforceParLevel: Boolean,
-                  experiment: java.util.function.Consumer[java.util.Map[java.lang.String,java.lang.String]]) =
+                  experiment: java.util.function.Consumer[java.util.Map[java.lang.String,Property]]) =
     Properties.read(path, name).splitOn(splitOn.asScala).
       par.level(defaultParLevel, enforceParLevel).
       foreach(f => experiment.accept(f.asJava))

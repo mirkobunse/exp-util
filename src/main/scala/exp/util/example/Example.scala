@@ -20,14 +20,14 @@ object Example {
          */
 
         // print what you do (apply retrieves property)
-        val seed = m.getAsInt("seed").get
+        val seed = m getInt "seed"
         println("Conducting experiment '%s' on RNG seed %d...".
-          format(m apply Properties.EXPERIMENT_NAME, seed))
+          format(m getString Properties.EXPERIMENT_NAME, seed))
 
         // generate "num" random numbers ranging up to a value of "max"
         val rng = new Random(seed)
-        for (i <- 1 to m.getAsInt("num").get)
-          println("...%d generated %f".format(seed, rng.nextDouble * m.getAsDouble("max").get))
+        for (i <- 1 to m.getInt("num"))
+          println("...%d generated %f".format(seed, rng.nextDouble * m.getDouble("max")))
 
       })
   

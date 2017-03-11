@@ -15,62 +15,43 @@ class Properties
 
 object Properties {
   
-  implicit class PropertyListMap(val m: ListMap[String, String]) {
+  implicit class PropertyListMap(val m: ListMap[String, Property]) {
 
-    val _matchRange = """([0-9]+)\s*to\s*([0-9]+)""".r
-    val _matchList = """\{\s*(.*)\s*\}""".r
+    def getString(key: String) = m.get(key).get.asString
 
-    def getAsString(key: String) = m.get(key)
+    def getDouble(key: String) = m.get(key).get.asDouble
 
-    def getAsDouble(key: String): Option[Double] = m.get(key) match {
-      case Some(property) if Try(property.toDouble).isSuccess => Option(property.toDouble)
-      case _ => None
-    }
+    def getInt(key: String) = m.get(key).get.asInt
 
-    def getAsInt(key: String): Option[Int] = m.get(key) match {
-      case Some(property) if Try(property.toInt).isSuccess => Option(property.toInt)
-      case _ => None
-    }
-
-    def getAsList(key: String): Option[List[String]] = m.get(key) match {
-      case Some(v) => v match {
-        case _matchRange(l, u) => Option(l.toInt to u.toInt map (_.toString) toList)
-        case _matchList(inner) => Option(inner split (",") toList)
-        case _ => None
-      }
-      case _ => None
-    }
+    def getList(key: String) = m.get(key).get.asList
   
-    def splitOn(key: String) = m getAsList key match {
-      case Some(list) => list.map(f => (m - key) + (key -> f) ) toArray
-      case _ => Array(m)
-    }
+    def splitOn(key: String) = m.getList(key).map(f => (m - key) + (key -> f) ) toArray
     
-    def splitOn(keys: Seq[String]): Array[ListMap[String, String]] = 
+    def splitOn(keys: Seq[String]): Array[ListMap[String, Property]] = 
       if (keys.length == 1) m.splitOn(keys(0)) else m.splitOn(keys(0)).splitOn(keys.slice(1, keys.length))
       
     def write(path: String)  = Properties.write(path, m)
     
   }
   
-  implicit class PropertyListMapArray(val a: Array[ListMap[String, String]]) {
+  implicit class PropertyListMapArray(val a: Array[ListMap[String, Property]]) {
     
     def splitOn(key: String) = a.flatMap(_.splitOn(key))
     
-    def splitOn(keys: Seq[String]): Array[ListMap[String, String]] = 
+    def splitOn(keys: Seq[String]): Array[ListMap[String, Property]] = 
       if (keys.length == 1) a.splitOn(keys(0)) else a.splitOn(keys(0)).splitOn(keys.slice(1, keys.length))
       
   }
   
-  implicit class ConfParArray(val p: ParArray[ListMap[String, String]]) {
+  implicit class ConfParArray(val p: ParArray[ListMap[String, Property]]) {
     
-    private[this] def level(parallelism: Int): ParArray[ListMap[String, String]] = {
+    private[this] def level(parallelism: Int): ParArray[ListMap[String, Property]] = {
       p.tasksupport = new ForkJoinTaskSupport(new ForkJoinPool(parallelism))
       p
     }
     
-    def level(default: Int, enforce: Boolean): ParArray[ListMap[String, String]] =
-      level(if (enforce) default else p(0).getOrElse(PARALLELISM_LEVEL, default).toString.toInt)
+    def level(default: Int, enforce: Boolean): ParArray[ListMap[String, Property]] =
+      level(if (enforce) default else Try(p(0).getInt(PARALLELISM_LEVEL)).getOrElse(default))
       
   }
 
@@ -87,17 +68,17 @@ object Properties {
    * @param name name of the experiment
    * @return property mapping specified in file
    */
-  def read(path: String, name: String): ListMap[String, String] =
+  def read(path: String, name: String) =
     ListMap(Source.fromFile(path).getLines()
       .filter(p => p.trim.length > 0 && !p.startsWith("#"))  // filter comment lines
       .map(f => {
         // split into property name and value
         val s = f.split("=").map(_.split("#")(0).trim)
-        (s(0), s(1))
+        (s(0), new Property(s(1)))
       }).toSeq:_*) +      // ListMap(..toSeq:_*) preserves order
-      (EXPERIMENT_NAME -> name) +
-      (START_TIME      -> Calendar.getInstance().getTime().toString()) +
-      (BASE_PROPERTIES -> path)
+      (EXPERIMENT_NAME -> new Property(name)) +
+      (START_TIME      -> new Property(Calendar.getInstance().getTime().toString())) +
+      (BASE_PROPERTIES -> new Property(path))
   
   /**
    * Write a property mapping to a file
@@ -105,7 +86,7 @@ object Properties {
    * @param path path of the output file
    * @param p property mapping
    */
-  def write(path: String, p: Map[String, String]) {
+  def write(path: String, p: Map[String, Property]) {
     val l = p.keysIterator.map(_.length).max
     val w = new PrintWriter(new File(path))
     try {
