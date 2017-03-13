@@ -10,7 +10,7 @@ class Property(val s: String) extends Serializable {
 
   def asList(): List[Property] = s match {
     case Property.matchRange(l, u) => l.toInt to u.toInt map (f => new Property(f.toString)) toList
-    case Property.matchList(inner) => inner split (",") map (f => new Property(f)) toList
+    case Property.matchList(inner) => inner split (",") map (f => new Property(f.trim)) toList
     case _ => throw new ClassCastException("Property not formatted as list or range")
   }
   
