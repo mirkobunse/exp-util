@@ -91,15 +91,21 @@ object Properties {
    * @param p property mapping
    */
   def write(path: String, p: Map[String, Property]) {
-    val l = p.keysIterator.map(_.length).max
-    val w = new PrintWriter(new File(path))
+    var w: PrintWriter = null
     try {
-      p.foreach(f => w.write(
-        String.format("%1$" + l + "s = %2$s\n", f._1, f._2.toString)))
+      w = new PrintWriter(new File(path))
+      w write format(p)
     } finally {
       if (w != null)
         w.close
     }
+  }
+
+  def format(p: Map[String, Property]) = {
+    val l = p.keysIterator.map(_.length).max
+    val s = new StringBuilder
+    p.foreach( f => s ++= String.format("%1$" + l + "s = %2$s\n", f._1, f._2.toString) )
+    s.toString
   }
 
 }
