@@ -17,8 +17,8 @@
   
   <modules>
     <module>exp-util-base</module>
+    <module>exp-util-spark</module>
     <module>exp-util-example</module>
-    <!-- <module>exp-util-spark</module> -->
   </modules>
 
   <build>

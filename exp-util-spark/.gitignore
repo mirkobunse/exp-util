@@ -1,0 +1,10 @@
+target/
+
+# eclipse stuff
+.cache-main
+.classpath
+.project
+.settings/
+.cache-tests
+
+*.swp

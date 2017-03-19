@@ -19,6 +19,12 @@
       <version>${project.version}</version>
     </dependency>
     
+    <dependency>
+      <groupId>com.github.mirkobunse</groupId>
+      <artifactId>exp-util-spark</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    
   </dependencies>
 
   <build>
