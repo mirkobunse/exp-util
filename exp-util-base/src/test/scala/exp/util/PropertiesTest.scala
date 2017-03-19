@@ -11,7 +11,7 @@ class PropertiesTest extends FlatSpec with Matchers {
   val name    = "PropertiesTest"
   val p       = Properties.read(path, name) where ("myProp" -> "myVal")
   
-  println("Formatted config String:\n" + Properties.format(p))
+  println( "Formatted config String:\n" + p.format )
 
   "Properties" should "read specified properties" in {
     p getString "prop1"      shouldBe "abc"

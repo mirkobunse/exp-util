@@ -34,6 +34,8 @@ object Properties {
         
     def write(path: String)  = Properties.write(path, m)
     
+    def format = Properties.format(m)
+    
   }
   
   implicit class PropertyListMapSeq(val a: Seq[ListMap[String, Property]]) {
