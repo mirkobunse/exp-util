@@ -6,6 +6,7 @@
   <artifactId>exp-util</artifactId>
   <name>exp-util</name>
   <version>v0.0.3-SNAPSHOT</version>
+  <packaging>pom</packaging>
   <description>Utilities for frequent patterns of experimental setups</description>
 
   <properties>
@@ -13,6 +14,11 @@
     <scala.compat.version>2.11</scala.compat.version>
     <scala.version>${scala.compat.version}.8</scala.version>
   </properties>
+  
+  <modules>
+    <module>exp-util-base</module>
+    <!-- <module>exp-util-spark</module> -->
+  </modules>
 
   <dependencies>
 
@@ -40,9 +46,6 @@
   </dependencies>
 
   <build>
-    <sourceDirectory>src/main/scala</sourceDirectory>
-    <testSourceDirectory>src/test/scala</testSourceDirectory>
-
     <plugins>
 
       <!-- Scala compilation -->
