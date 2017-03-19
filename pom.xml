@@ -21,32 +21,10 @@
     <!-- <module>exp-util-spark</module> -->
   </modules>
 
-  <dependencies>
-
-    <!-- Name the obvious for Java projects using this -->
-    <dependency>
-      <groupId>org.scala-lang</groupId>
-      <artifactId>scala-library</artifactId>
-      <version>${scala.version}</version>
-    </dependency>
-
-    <!-- Testing -->
-    <dependency>
-      <groupId>org.scalactic</groupId>
-      <artifactId>scalactic_${scala.compat.version}</artifactId>
-      <version>3.0.1</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.scalatest</groupId>
-      <artifactId>scalatest_${scala.compat.version}</artifactId>
-      <version>3.0.1</version>
-      <scope>test</scope>
-    </dependency>
-
-  </dependencies>
-
   <build>
+    <sourceDirectory>src/main/scala</sourceDirectory>
+    <testSourceDirectory>src/test/scala</testSourceDirectory>
+    
     <plugins>
 
       <!-- Scala compilation -->
