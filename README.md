@@ -27,11 +27,21 @@ The project artifact is built and maintained by [jitpack](https://jitpack.io/). 
   ...
   <!-- the dependency has to refer to the github repository and artifact tag -->
   <dependency>
-    <groupId>com.github.mirkobunse</groupId>
-    <artifactId>exp-util</artifactId>
-    <version>v0.0.2-alpha</version>   <!-- '-SNAPSHOT' for current state of master branch -->
+    <groupId>com.github.mirkobunse.exp-util</groupId>
+    <artifactId>exp-util-base</artifactId>
+    <version>v0.0.3-alpha</version>   <!-- '-SNAPSHOT' for current state of master branch -->
   </dependency>
 </dependencies>
+```
+
+For Spark, use the `exp-util-spark` dependency instead:
+
+```xml
+  <dependency>
+    <groupId>com.github.mirkobunse.exp-util</groupId>
+    <artifactId>exp-util-spark</artifactId>
+    <version>v0.0.3-alpha</version>
+  </dependency>
 ```
 
 You can now parse a property file, split it into experimental units and run these
