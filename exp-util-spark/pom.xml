@@ -5,7 +5,7 @@
   <parent>
     <groupId>com.github.mirkobunse</groupId>
     <artifactId>exp-util</artifactId>
-    <version>v0.0.3-SNAPSHOT</version>
+    <version>v0.0.3-alpha</version>
     <relativePath>..</relativePath>
   </parent>
   <artifactId>exp-util-spark</artifactId>
