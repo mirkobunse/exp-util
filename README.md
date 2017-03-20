@@ -74,9 +74,9 @@ If you prefer Java over Scala, take a look at
 
 
 
-## Using Spark and HDFS
+## Using Spark
 
-To run the [SparkHdfsExample](https://github.com/mirkobunse/exp-util/blob/master/exp-util-example/src/main/scala/exp/util/example/SparkHdfsExample.scala),
+To run the [SparkExample](https://github.com/mirkobunse/exp-util/blob/master/exp-util-example/src/main/scala/exp/util/example/SparkExample.scala),
 you need a running YARN cluster with HDFS.
 Moreover, you have to have Spark and a Hadoop client installed locally on your machine.
 The environment variables `HADOOP_HOME`, `SPARK_HOME`, `HADOOP_USER_NAME` and `HADOOP_CONF_DIR` have to be set.
@@ -86,7 +86,7 @@ With spark-submit, you will send a configured job to YARN. It is important to pr
 `--files` argument. This example assumes that the HDFS directory `/jars` contains all of the Spark binaries.
 
       $SPARK_HOME/bin/spark-submit \
-          --class exp.util.example.SparkHdfsExample \
+          --class exp.util.example.SparkExample \
           --master yarn \
           --deploy-mode cluster \
           --conf spark.yarn.jars=hdfs:///jars/*.jar \

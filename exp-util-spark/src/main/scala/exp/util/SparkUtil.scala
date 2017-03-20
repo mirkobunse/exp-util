@@ -20,6 +20,6 @@ object SparkUtil {
   def readProperties(sc: SparkContext, path: String) = 
     sc.parallelize(Seq( sc.getConf.get("spark.app.name") )).
     map( name => Properties.read( SparkFiles.get(path), name )).
-    collect apply 0
+    first
   
 }
