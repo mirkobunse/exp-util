@@ -5,7 +5,7 @@
   <groupId>com.github.mirkobunse</groupId>
   <artifactId>exp-util</artifactId>
   <name>exp-util</name>
-  <version>v0.0.3-alpha</version>
+  <version>v0.0.4-SNAPSHOT</version>
   <packaging>pom</packaging>
   <description>Utilities for frequent patterns of experimental setups</description>
 
