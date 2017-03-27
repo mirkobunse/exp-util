@@ -16,7 +16,7 @@ object SparkExample {
   
   def main(args: Array[String]) = {
     
-    val sc = new SparkContext(new SparkConf().setAppName( classOf[SparkExample] getSimpleName ))
+    val sc = new SparkContext(new SparkConf().setAppName( classOf[SparkExample].getSimpleName() ))
     val props = SparkUtil.readProperties(sc, "example.properties")
         
     println(props.format)
