@@ -4,6 +4,7 @@ import java.io.File
 import java.io.PrintWriter
 import java.util.Calendar
 
+import scala.language.postfixOps
 import scala.io.Source
 import scala.collection.immutable.ListMap
 import scala.collection.parallel.ParSeq

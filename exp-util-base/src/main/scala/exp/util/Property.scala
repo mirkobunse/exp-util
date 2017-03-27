@@ -1,5 +1,7 @@
 package exp.util
 
+import scala.language.postfixOps
+
 class Property(val s: String) extends Serializable {
 
   def asString() = s
