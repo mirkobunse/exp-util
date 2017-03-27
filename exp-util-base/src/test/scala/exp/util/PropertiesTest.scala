@@ -19,6 +19,7 @@ class PropertiesTest extends FlatSpec with Matchers {
     p getString "someDouble" shouldBe "4.0"
     p getString "split1"     shouldBe "1 to 3"
     p getString "split2"     shouldBe "{1.0,2.0,3.0,4.0,5.0}"
+    p getString "bylist"     shouldBe "0 to 4 by 2"
   }
   
   it should "cast properties correctly" in {
@@ -27,7 +28,8 @@ class PropertiesTest extends FlatSpec with Matchers {
     p.getDouble("someInt")    shouldBe 4.0  // allowed cast
     p.getList("split1") should contain allOf("1", "2", "3")
     p.getList("split2") should contain allOf("1.0", "2.0", "3.0", "4.0", "5.0")
-    
+    p.getList("bylist") should contain allOf("0", "2", "4")
+    p.getList("bylist") should contain noneOf("1", "3")
   }
   
   it should "recognize inline comments" in {
