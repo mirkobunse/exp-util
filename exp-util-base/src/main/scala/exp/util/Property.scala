@@ -9,13 +9,27 @@ class Property(val s: String) extends Serializable {
   def asDouble() = s.toDouble
 
   def asInt() = s.toInt
-
-  def asList(): List[Property] = s match {
-    case Property.matchRange(l, u, null, null) => l.toInt to u.toInt map (f => new Property(f.toString)) toList
-    case Property.matchRange(l, u, _, b) => l.toInt to u.toInt by b.toInt map (f => new Property(f.toString)) toList
-    case Property.matchList(inner) => inner split (",") map (f => new Property(f.trim)) toList
-    case _ => throw new ClassCastException("Property '%s' not formatted as list or range".format(s))
-  }
+  
+  def asList(): List[Property] = (s match {
+    
+    case Property.matchDoubleRange(l, u, null, null) =>
+      l.toDouble to u.toDouble by 1.0 map(_.toString) toList
+      
+    case Property.matchDoubleRange(l, u, _, b) =>
+      l.toDouble to u.toDouble by b.toDouble map(_.toString) toList
+      
+    case Property.matchIntRange(l, u, null, null) =>
+      l.toInt to u.toInt map(_.toString) toList
+      
+    case Property.matchIntRange(l, u, _, b) =>
+      l.toInt to u.toInt by b.toInt map(_.toString) toList
+      
+    case Property.matchList(inner) => inner split (",") toList
+    
+    case _ =>
+      throw new ClassCastException("Property '%s' not formatted as list or range".format(s))
+      
+  }) map (f => new Property(f.trim))
   
   override def toString = s
   
@@ -30,6 +44,7 @@ class Property(val s: String) extends Serializable {
 }
 
 object Property {
-  private val matchRange = """([0-9]+)\s*to\s*([0-9]+)(\s*by\s*)?([0-9]+)?""".r
+  private val matchDoubleRange = """(-?\d+\.\d+)\s*to\s*(-?\d+\.\d+)(\s*by\s*)?(-?\d+\.\d+)?""".r
+  private val matchIntRange = """(-?\d+)\s*to\s*(-?\d+)(\s*by\s*)?(-?\d+)?""".r
   private val matchList = """\{\s*(.*)\s*\}""".r
 }

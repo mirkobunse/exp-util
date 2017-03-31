@@ -1,7 +1,9 @@
 package exp.util
 
-import org.scalatest._
 import java.io.FileNotFoundException
+
+import org.scalatest._
+
 import exp.util.Properties._
 
 class PropertiesTest extends FlatSpec with Matchers {
@@ -20,6 +22,7 @@ class PropertiesTest extends FlatSpec with Matchers {
     p getString "split1"     shouldBe "1 to 3"
     p getString "split2"     shouldBe "{1.0,2.0,3.0,4.0,5.0}"
     p getString "bylist"     shouldBe "0 to 4 by 2"
+    p getString "byDouble"   shouldBe "-0.1 to 0.1 by 0.05"
   }
   
   it should "cast properties correctly" in {
@@ -30,6 +33,7 @@ class PropertiesTest extends FlatSpec with Matchers {
     p.getList("split2") should contain allOf("1.0", "2.0", "3.0", "4.0", "5.0")
     p.getList("bylist") should contain allOf("0", "2", "4")
     p.getList("bylist") should contain noneOf("1", "3")
+    p.getList("byDouble") should contain allOf("-0.1", "-0.05", "0.0", "0.05", "0.1")
   }
   
   it should "recognize inline comments" in {
