@@ -29,7 +29,7 @@ The project artifact is built and maintained by [jitpack](https://jitpack.io/). 
   <dependency>
     <groupId>com.github.mirkobunse.exp-util</groupId>
     <artifactId>exp-util-base</artifactId>
-    <version>v0.0.3-alpha</version>   <!-- '-SNAPSHOT' for current state of master branch -->
+    <version>v0.0.4-alpha</version>   <!-- '-SNAPSHOT' for current state of master branch -->
   </dependency>
 </dependencies>
 ```
@@ -40,7 +40,7 @@ For Spark, use the `exp-util-spark` dependency instead:
   <dependency>
     <groupId>com.github.mirkobunse.exp-util</groupId>
     <artifactId>exp-util-spark</artifactId>
-    <version>v0.0.3-alpha</version>
+    <version>v0.0.4-alpha</version>
   </dependency>
 ```
 
