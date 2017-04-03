@@ -65,11 +65,12 @@ with certain types (String, Double, Int and List/Range) directly.
 
 ```scala
 Properties.read("src/main/resources/example.properties", "Example")
+      .withMapping("foo" -> "bar")
       .splitOn("seed").par.level(2, false).foreach(m => {
 
     val seed = m getInt "seed"
-    println("Conducting experiment '%s' on RNG seed %d...".
-      format(m getString Properties.EXPERIMENT_NAME, seed))
+    println("Conducting experiment '%s' on RNG seed %d (foo = '%s')...".
+      format(m getString Properties.EXPERIMENT_NAME, seed, m getString "foo"))
 
     // generate "num" random numbers ranging up to a value of "max"
     val rng = new Random(seed)
@@ -103,7 +104,7 @@ With spark-submit, you will send a configured job to YARN. It is important to pr
           --files exp-util-example/src/main/resources/example.properties \
           exp-util-example/target/exp-util-example-v0.0.3-SNAPSHOT.jar
 
-If the job prints the contents of the properties file to the driver's console, you are good to go!
+The job prints the contents of the properties file to the driver's console and you are good to go!
 
 
 

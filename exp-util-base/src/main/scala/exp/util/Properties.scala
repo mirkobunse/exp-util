@@ -31,7 +31,7 @@ object Properties {
     def splitOn(keys: Seq[String]): Seq[ListMap[String, Property]] = 
       if (keys.length == 1) m.splitOn(keys(0)) else m.splitOn(keys(0)).splitOn(keys.slice(1, keys.length))
     
-    def where(kv: (String, String)) = m + (kv._1 -> new Property(kv._2))
+    def withMapping(kv: (String, String)) = m + (kv._1 -> new Property(kv._2))
         
     def write(path: String)  = Properties.write(path, m)
     
@@ -82,10 +82,10 @@ object Properties {
         // split into property name and value
         val s = f.split("=").map(_.split("#")(0).trim)
         (s(0), new Property(s(1)))
-      }).toSeq:_*) where      // ListMap(..toSeq:_*) preserves order
-      (EXPERIMENT_NAME -> name) where
-      (START_TIME      -> Calendar.getInstance().getTime().toString()) where
-      (BASE_PROPERTIES -> path)
+      }).toSeq:_*) // ListMap(..toSeq:_*) preserves order
+      .withMapping(EXPERIMENT_NAME -> name)
+      .withMapping(START_TIME      -> Calendar.getInstance().getTime().toString())
+      .withMapping(BASE_PROPERTIES -> path)
   
   /**
    * Write a property mapping to a file

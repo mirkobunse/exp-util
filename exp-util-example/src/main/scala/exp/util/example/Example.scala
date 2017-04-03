@@ -13,6 +13,7 @@ object Example {
   def main(args: Array[String]) =
 
     Properties.read("src/main/resources/example.properties", "Example")
+      .withMapping("foo" -> "bar")
       .splitOn("seed").par.level(2, false).foreach(m => {
 
         /*
@@ -21,8 +22,8 @@ object Example {
 
         // print what you do (apply retrieves property)
         val seed = m getInt "seed"
-        println("Conducting experiment '%s' on RNG seed %d...".
-          format(m getString Properties.EXPERIMENT_NAME, seed))
+        println("Conducting experiment '%s' on RNG seed %d (foo = '%s')...".
+          format(m getString Properties.EXPERIMENT_NAME, seed, m getString "foo"))
 
         // generate "num" random numbers ranging up to a value of "max"
         val rng = new Random(seed)

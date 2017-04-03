@@ -11,7 +11,7 @@ class PropertiesTest extends FlatSpec with Matchers {
   val path    = "src/test/resources/test.properties"
   val outpath = "target/testout.properties"
   val name    = "PropertiesTest"
-  val p       = Properties.read(path, name) where ("myProp" -> "myVal")
+  val p       = Properties.read(path, name) withMapping ("myProp" -> "myVal")
   
   println( "Formatted config String:\n" + p.format )
 
