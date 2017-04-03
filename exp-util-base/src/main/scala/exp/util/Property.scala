@@ -1,6 +1,7 @@
 package exp.util
 
 import scala.language.postfixOps
+import org.slf4j.LoggerFactory
 
 class Property(val s: String) extends Serializable {
 
@@ -26,9 +27,12 @@ class Property(val s: String) extends Serializable {
       
     case Property.matchList(inner) => inner split (",") toList
     
-    case _ =>
-      throw new ClassCastException("Property '%s' not formatted as list or range".format(s))
-      
+    case _ => {
+      Property.log.warn("Property '%s' not formatted as list or range. ".format(s) +
+          "asList() returns single-element list '{ %s }'.".format(s))
+      List(s)
+    }
+    
   }) map (f => new Property(f.trim))
   
   override def toString = s
@@ -44,7 +48,11 @@ class Property(val s: String) extends Serializable {
 }
 
 object Property {
+  
+  private val log = LoggerFactory.getLogger( classOf[Property] )
+  
   private val matchDoubleRange = """(-?\d+\.\d+)\s*to\s*(-?\d+\.\d+)(\s*by\s*)?(-?\d+\.\d+)?""".r
   private val matchIntRange = """(-?\d+)\s*to\s*(-?\d+)(\s*by\s*)?(-?\d+)?""".r
   private val matchList = """\{\s*(.*)\s*\}""".r
+  
 }

@@ -57,7 +57,6 @@ class PropertiesTest extends FlatSpec with Matchers {
   }
   
   it should "fail for illegal cast" in {
-    a[ClassCastException] shouldBe thrownBy(p.getList("someDouble"))
     a[NumberFormatException] shouldBe thrownBy(p.getInt("someDouble"))
   }
   

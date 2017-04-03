@@ -19,6 +19,13 @@
       <artifactId>scala-library</artifactId>
       <version>${scala.version}</version>
     </dependency>
+    
+    <!-- Logging -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>[1.7.16,)</version>
+    </dependency>
 
     <!-- Testing -->
     <dependency>
